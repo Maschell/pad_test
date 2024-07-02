@@ -144,7 +144,8 @@ int main(int argc, char const *argv[]) {
     }
 
     PadInit();
-    PADStatusWrapper status = {};
+    PADStatusWrapper status     = {};
+    PADStatusWrapper lastStatus = {};
 
     int running = 1;
     SDL_Event e;
@@ -158,13 +159,29 @@ int main(int argc, char const *argv[]) {
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
 
-        drawText(32.0f, 16.0f, 48.0f, "PAD Test by Maschell (based on HPAD Test by GaryOderNichts)");
+        drawText(32.0f, 16.0f, 45.0f, "PAD Test by Maschell/GaryOderNichts");
+        drawText(974.0f, 32.0f, 30.0f, "Press Z and either A, B or X to send rumble commands.");
 
+        lastStatus = status;
         PADRead(&status);
 
         float posX = 32.0f, posY = 200.0f;
         for (int i = 0; i < 4; i++) {
             drawController(posX, posY, i, &status.data[i]);
+
+            if (status.data[i].button & PAD_TRIGGER_Z) {
+                if (status.data[i].button & PAD_BUTTON_A && !(lastStatus.data[i].button & PAD_BUTTON_A)) {
+                    PADControlMotor(i, PAD_MOTOR_RUMBLE);
+                }
+                if (status.data[i].button & PAD_BUTTON_B && !(lastStatus.data[i].button & PAD_BUTTON_B)) {
+                    PADControlMotor(i, PAD_MOTOR_STOP);
+                }
+                if (status.data[i].button & PAD_BUTTON_X && !(lastStatus.data[i].button & PAD_BUTTON_X)) {
+                    PADControlMotor(i, PAD_MOTOR_STOP_HARD);
+                }
+            }
+
+
             posY += 200.0f;
         }
 

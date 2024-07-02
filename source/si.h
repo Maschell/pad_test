@@ -26,3 +26,4 @@ void SIDisablePolling(uint32_t val);
 bool SIGetResponse(int chan, uint32_t *inputBuffer);
 
 void SIClearErrorBits(uint32_t chan);
+void SITransferCommands();

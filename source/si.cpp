@@ -96,7 +96,7 @@ void SISetCommand(int chan, uint32_t val) {
     OSEnforceInorderIO();
 }
 
-static void SITransferCommands() {
+void SITransferCommands() {
     __OSWriteRegister32Ex(OS_DEVICE_SI, 0x0e, 0x80000000);
     OSEnforceInorderIO();
 }

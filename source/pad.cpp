@@ -82,8 +82,8 @@ void PADRead(PADStatusWrapper *status) {
                 } else {
                     status->data[chan].err = PAD_ERR_NOT_READY;
                     PADMakeStatus(&status->data[chan], inputBuffer);
-                    status->data[chan].err    = PAD_ERR_NONE;
-                    status->data[chan].button = ~0x80;
+                    status->data[chan].err = PAD_ERR_NONE;
+                    status->data[chan].button &= ~0x80;
                 }
             }
         }
@@ -129,6 +129,16 @@ void PADDriver_OnReleaseForeground() {
     for (int chan = 0; chan < 4; chan++) {
         PADDisable(chan);
     }
+}
+
+void PADControlMotor(int32_t chan, uint32_t cmd) {
+    OSLockMutex(&sPADMutex);
+    if ((sPADEnabledBits & PAD_ENABLEDMASK(chan))) {
+        cmd = 0x00400000 | sPADAnalogMode | (cmd & 0x03);
+        SISetCommand(chan, cmd);
+        SITransferCommands();
+    }
+    OSUnlockMutex(&sPADMutex);
 }
 
 extern "C" void OSDriver_Register(uint32_t, uint32_t, void *, uint32_t, uint32_t, uint32_t, uint32_t);
