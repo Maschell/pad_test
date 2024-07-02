@@ -3,10 +3,10 @@
 #include "vi.h"
 #include <coreinit/mutex.h>
 
-static OSMutex sPADMutex           = {};
-static bool sPADInitialized = false;
-static uint32_t sPADEnabledBits    = {};
-static uint32_t sPADAnalogMode     = 0x300;
+static OSMutex sPADMutex        = {};
+static bool sPADInitialized     = false;
+static uint32_t sPADEnabledBits = {};
+static uint32_t sPADAnalogMode  = 0x300;
 
 void PADMakeStatus(PADStatus *status, const uint32_t *data) {
     uint32_t analogMode = sPADAnalogMode & 0x700;
